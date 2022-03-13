@@ -29,13 +29,10 @@ def create_app(config):
 
     @app.route('/showSummary',methods=['POST'])
     def showSummary():
-        list_email = []
-        for club in clubs:
-            print(club["email"])
-            list_email.append(club)
-        # print(request.form['email'])
-        # print([club for club in clubs if club['email']])
-        club = [club for club in clubs if club['email'] == request.form['email']][0]
+        try:
+            club = [club for club in clubs if club['email'] == request.form['email']][0]
+        except IndexError:
+            return "Sorry, that email wasn't found."
         return render_template('welcome.html',club=club,competitions=competitions)
 
 
@@ -52,9 +49,14 @@ def create_app(config):
 
     @app.route('/purchasePlaces',methods=['POST'])
     def purchasePlaces():
+        print(request.form)
         competition = [c for c in competitions if c['name'] == request.form['competition']][0]
+        print(competition)
         club = [c for c in clubs if c['name'] == request.form['club']][0]
+        print(club)
         placesRequired = int(request.form['places'])
+        print(placesRequired)
+        print(int(competition['numberOfPlaces']))
         competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
         flash('Great-booking complete!')
         return render_template('welcome.html', club=club, competitions=competitions)
