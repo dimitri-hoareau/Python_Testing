@@ -44,7 +44,6 @@ def create_app(config):
 
         now = datetime.now()
         date_time_now = now.strftime("%Y-%m-%d %H:%M:%S")
-        print(foundCompetition)
         if foundClub and foundCompetition:
             return render_template('booking.html',club=foundClub,competition=foundCompetition, date=date_time_now)
         else:
@@ -55,14 +54,27 @@ def create_app(config):
     @app.route('/purchasePlaces',methods=['POST'])
     def purchasePlaces():
         competition = [c for c in competitions if c['name'] == request.form['competition']][0]
-        print(competitions)
         club = [c for c in clubs if c['name'] == request.form['club']][0]
+        print(request.form)
+        point_club = club["points"]
+        places_competition = competition["numberOfPlaces"]
         placesRequired = int(request.form['places'])
         competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
         club["points"] = int(club["points"]) - placesRequired
-        flash('Great-booking complete!')
-        return render_template('welcome.html', club=club, competitions=competitions)
+        if club["points"] >= 0:
+            if placesRequired > 12:
+                club["points"] = point_club
+                competition["numberOfPlaces"] = places_competition
+                flash("You can't redeem more than 12 points ! please try again")
+                return render_template('welcome.html', club=club, competitions=competitions)
 
+            flash('Great-booking complete!')
+            return render_template('welcome.html', club=club, competitions=competitions)
+        else:
+            club["points"] = point_club
+            competition["numberOfPlaces"] = places_competition
+            flash("You haven't enought points in your possession !! Please try again")
+            return render_template('welcome.html', club=club, competitions=competitions)
 
     # TODO: Add route for points display
 
