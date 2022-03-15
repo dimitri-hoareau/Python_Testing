@@ -78,6 +78,12 @@ def create_app(config):
 
     # TODO: Add route for points display
 
+    @app.route("/clubs")
+    def list_clubs():
+        return render_template(
+            "clubs.html",
+            clubs=clubs,
+        )
 
     @app.route('/logout')
     def logout():
