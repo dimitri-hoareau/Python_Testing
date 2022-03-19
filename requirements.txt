@@ -13,3 +13,6 @@ pytest==6.2.4
 toml==0.10.2
 Werkzeug==1.0.1
 pytest-flask==1.2.0
+coverage==6.3.2
+pytest-cov==3.0.0
+locust==2.8.4

@@ -3,25 +3,31 @@ from datetime import datetime
 from flask import Flask,render_template,request,redirect,flash,url_for
 
 
+def loadClubs():
+    with open('clubs.json') as c:
+        listOfClubs = json.load(c)['clubs']
+        return listOfClubs
+
+
+def loadCompetitions():
+    with open('competitions.json') as comps:
+        listOfCompetitions = json.load(comps)['competitions']
+        return listOfCompetitions
+
+def find_club_or_competition(list_of_club_or_contest , key1, key2 ):
+    return [club for club in list_of_club_or_contest if club[key1] == key2][0]
+
+def find_club_or_competition_for_booking(list_of_club_or_contest, key1, key2 ):
+    return [c for c in list_of_club_or_contest if c[key1] == key2][0]
+
+competitions = loadCompetitions()
+clubs = loadClubs()
+
+
 def create_app(config):
     app = Flask(__name__)
     app.config.from_object(config)
     app.secret_key = 'something_special'
-
-    def loadClubs():
-        with open('clubs.json') as c:
-            listOfClubs = json.load(c)['clubs']
-            return listOfClubs
-
-
-    def loadCompetitions():
-        with open('competitions.json') as comps:
-            listOfCompetitions = json.load(comps)['competitions']
-            return listOfCompetitions
-
-
-    competitions = loadCompetitions()
-    clubs = loadClubs()
 
     @app.route('/')
     def index():
@@ -31,7 +37,8 @@ def create_app(config):
     @app.route('/showSummary',methods=['POST'])
     def showSummary():
         try:
-            club = [club for club in clubs if club['email'] == request.form['email']][0]
+            club = find_club_or_competition(clubs, 'email', request.form['email'])
+            # club = [club for club in clubs if club['email'] == request.form['email']][0]
         except IndexError:
             return "Sorry, that email wasn't found."
         return render_template('welcome.html',club=club,competitions=competitions)
@@ -39,8 +46,10 @@ def create_app(config):
 
     @app.route('/book/<competition>/<club>')
     def book(competition,club):
-        foundClub = [c for c in clubs if c['name'] == club][0]
-        foundCompetition = [c for c in competitions if c['name'] == competition][0]
+        # foundClub = [c for c in clubs if c['name'] == club][0]
+        # foundCompetition = [c for c in competitions if c['name'] == competition][0]
+        foundClub = find_club_or_competition_for_booking(clubs, 'name', club)
+        foundCompetition = find_club_or_competition_for_booking(competitions, 'name', competition)
 
         now = datetime.now()
         date_time_now = now.strftime("%Y-%m-%d %H:%M:%S")
@@ -53,8 +62,10 @@ def create_app(config):
 
     @app.route('/purchasePlaces',methods=['POST'])
     def purchasePlaces():
-        competition = [c for c in competitions if c['name'] == request.form['competition']][0]
-        club = [c for c in clubs if c['name'] == request.form['club']][0]
+        competition = find_club_or_competition(competitions, 'name', request.form['competition'])
+        club = find_club_or_competition(clubs, 'name', request.form['club'] )
+        # competition = [c for c in competitions if c['name'] == request.form['competition']][0]
+        # club = [c for c in clubs if c['name'] == request.form['club']][0]
         print(request.form)
         point_club = club["points"]
         places_competition = competition["numberOfPlaces"]
