@@ -1,5 +1,5 @@
 from http import server
-from server import find_club_or_competition, find_club_or_competition_for_booking
+from server import find_club_or_competition, find_club_or_competition_for_booking, places_deduction
 
 def test_find_club_or_competion():
     list_club_or_contest = [{'name': 'Simply Lift', 'email': 'john@simplylift.co', 'points': '13'}, {'name': 'Iron Temple', 'email': 'admin@irontemple.com', 'points': '4'}, {'name': 'She Lifts', 'email': 'kate@shelifts.co.uk', 'points': '12'}]
@@ -14,3 +14,8 @@ def test_find_club_or_competition_for_booking():
     key2 = 'Iron Temple'
     assert find_club_or_competition_for_booking(list_club_or_contest, key1, key2) == {'name': 'Iron Temple', 'email': 'admin@irontemple.com', 'points': '4'}
 
+
+def test_places_deduction():
+    club_points = "10"
+    places_required = 3
+    assert places_deduction(club_points, places_required) == 1
