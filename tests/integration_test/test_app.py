@@ -39,24 +39,16 @@ def test_try_to_book_more_than_12(client, request_data_param):
     assert b"<li>Great-booking complete!</li>" in response.data
     # assert b"<li>You can&#39;t redeem more than 12 points ! please try again</li>" in response.data 
 
-@pytest.mark.parametrize("competition", [({'name': 'Spring Festival', 'date': '2021-10-22 13:30:00', 'numberOfPlaces': '13'})])
-# @pytest.mark.parametrize("competition", [({'name': 'Fall Classic', 'date': '2023-10-22 13:30:00', 'numberOfPlaces': '13'})])
+# @pytest.mark.parametrize("competition", [({'name': 'Spring Festival', 'date': '2021-10-22 13:30:00', 'numberOfPlaces': '13'})])
+@pytest.mark.parametrize("competition", [({'name': 'Fall Classic', 'date': '2023-10-22 13:30:00', 'numberOfPlaces': '13'})])
 def test_try_to_book_past_competition_ok(client, competition):
     foundClub = {'name': 'Iron Temple', 'email': 'admin@irontemple.com', 'points': '4'}
     foundCompetition = competition
 
-    now = datetime.now()
-    date_time_now = now.strftime("%Y-%m-%d %H:%M:%S")
-
-    response_data = "<h3>This competition is still open</h3>"
-    
-    if foundCompetition['date'] < date_time_now:
-        response_data = "<h3>Sorry, this competition is already closed</h3>"
-
     response = client.get('/book/' + foundCompetition['name'] + '/' + foundClub['name'])
-    print(response.data)
 
-    assert bytes(str(response_data),'UTF-8') in response.data
+    assert b"<h3>This competition is still open</h3>" in response.data
+    # assert b"<h3>Sorry, this competition is already closed</h3>" in response.data
 
 
 
