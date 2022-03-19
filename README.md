@@ -49,3 +49,22 @@
     We also like to show how well we're testing, so there's a module called 
     [coverage](https://coverage.readthedocs.io/en/coverage-5.1/) you should add to your project.
 
+    - To launch the test :  
+
+     ```
+    pytest
+    ``` 
+
+    - to check the test coverage : 
+
+    ```
+    pytest --cov=.
+    ``` 
+
+    - to launch the performance test : 
+
+    ```
+    cd tests/performance_test  
+
+    locust
+    ``` 

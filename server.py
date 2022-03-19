@@ -20,6 +20,10 @@ def find_club_or_competition(list_of_club_or_contest , key1, key2 ):
 def find_club_or_competition_for_booking(list_of_club_or_contest, key1, key2 ):
     return [c for c in list_of_club_or_contest if c[key1] == key2][0]
 
+def places_deduction(club_points, places_required):
+    return int(club_points) - places_required * 3
+
+
 competitions = loadCompetitions()
 clubs = loadClubs()
 
@@ -66,12 +70,12 @@ def create_app(config):
         club = find_club_or_competition(clubs, 'name', request.form['club'] )
         # competition = [c for c in competitions if c['name'] == request.form['competition']][0]
         # club = [c for c in clubs if c['name'] == request.form['club']][0]
-        print(request.form)
         point_club = club["points"]
         places_competition = competition["numberOfPlaces"]
         placesRequired = int(request.form['places'])
         competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
-        club["points"] = int(club["points"]) - placesRequired
+        # club["points"] = int(club["points"]) - placesRequired * 3
+        club["points"] = places_deduction(club["points"], placesRequired)
         if club["points"] >= 0:
             if placesRequired > 12:
                 club["points"] = point_club
