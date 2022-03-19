@@ -6,6 +6,8 @@
 </head>
 <body>
     <h2>{{competition['name']}}</h2>
+    {% if date < competition['date'] %}
+    <h3>This competition is still open</h3>
     Places available: {{competition['numberOfPlaces']}}
     <form action="/purchasePlaces" method="post">
         <input type="hidden" name="club" value="{{club['name']}}">
@@ -13,5 +15,9 @@
         <label for="places">How many places?</label><input type="number" name="places" id=""/>
         <button type="submit">Book</button>
     </form>
+    <p> Warning : You have to use 3 points to book one place !</p>
+    {% else %}
+        <h3>Sorry, this competition is already closed</h3>
+    {% endif %}
 </body>
 </html>
